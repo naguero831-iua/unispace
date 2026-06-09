@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UniSpace – SiGRE</title>
+<title>UniSpace – UNISPACE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -144,11 +144,40 @@
   .config-row input::placeholder{color:rgba(255,255,255,.4);}
   .config-row input:focus{border-color:rgba(255,255,255,.4);}
   .config-note{font-size:.75rem;opacity:.5;margin-top:.4rem;}
+  .menu-btn{display:none;background:transparent;border:none;color:white;font-size:20px;margin-right:10px;cursor:pointer}
+
+  /* Responsive: mobile layout */
+  @media (max-width: 900px){
+    .topnav{padding:0 1rem;height:56px}
+    .brand .sub{display:none}
+    .menu-btn{display:block}
+    .sidebar{position:fixed;left:-100%;top:56px;height:calc(100% - 56px);width:78%;max-width:360px;z-index:220;box-shadow:0 8px 30px rgba(0,0,0,.2);transition:left .22s ease;background:var(--white)}
+    .sidebar.open{left:0}
+    .shell{min-height:calc(100vh - 56px)}
+    .main{padding:1rem;}
+    .stat-grid{grid-template-columns:repeat(2,1fr)}
+    .space-grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));}
+    .stat{padding:1rem}
+    .card{padding:1rem}
+    .ph h1{font-size:1.15rem}
+    .ph p{font-size:.8rem}
+    .nav-item{font-size:.86rem;padding:.6rem .75rem}
+  }
+
+  @media (max-width: 480px){
+    .stat-grid{grid-template-columns:1fr}
+    .cols-2{grid-template-columns:1fr}
+    .cols-3{grid-template-columns:1fr}
+    .form-row .fg input,.form-row .fg select{height:42px}
+    .space-card{padding:.9rem}
+    .space-name{font-size:.9rem}
+    .menu-btn{font-size:22px}
+  }
 </style>
 </head>
 <body>
 <nav class="topnav">
-  <div class="brand"><div class="logo">🏫</div>UniSpace<span class="sub">SiGRE – IUA Facultad de Ingeniería</span></div>
+  <div class="brand"><div class="logo">🏫</div>UniSpace<span class="sub">UNISPACE – IUA Facultad de Ingeniería</span></div>
   <div class="nav-right">
     <span class="ds-badge loading" id="ds-badge" title="Click para configurar fuente de datos" onclick="toggleConfig()">⏳ Cargando…</span>
     <span id="nav-name">Juan Pérez</span>
@@ -157,6 +186,7 @@
   </div>
 </nav>
 <div class="shell">
+  <div id="mobile-overlay" style="display:none;position:fixed;inset:56px 0 0 0;background:rgba(0,0,0,.35);z-index:210" onclick="closeSidebar()"></div>
   <aside class="sidebar">
     <div class="sidebar-label">Navegación</div>
     <button class="nav-item active" onclick="go('dashboard')" id="nav-dashboard"><span class="ni">🏠</span>Dashboard</button>
@@ -570,6 +600,8 @@ function go(id){
   document.getElementById('screen-'+id).classList.add('active');
   const nav=document.getElementById('nav-'+id);
   if(nav)nav.classList.add('active');
+  // cerrar sidebar en móvil al navegar
+  if(typeof closeSidebar==='function') closeSidebar();
 }
 
 // ====== ROLE ======
@@ -810,6 +842,16 @@ function toast(msg,type){
 }
 
 // ====== INIT ======
+// ====== MOBILE SIDEBAR HELPERS ======
+function toggleSidebar(){
+  const sb=document.querySelector('.sidebar');
+  const ov=document.getElementById('mobile-overlay');
+  if(!sb) return;
+  if(sb.classList.contains('open')){ sb.classList.remove('open'); if(ov)ov.style.display='none'; }
+  else { sb.classList.add('open'); if(ov)ov.style.display='block'; }
+}
+function closeSidebar(){ const sb=document.querySelector('.sidebar'); const ov=document.getElementById('mobile-overlay'); if(sb)sb.classList.remove('open'); if(ov)ov.style.display='none'; }
+
 loadData();
 // Inicializar interfaz: rol y fecha por defecto
 setRole(currentRole);
@@ -823,5 +865,7 @@ setRole(currentRole);
   if(rf){rf.value=today;rf.min=today;}
 })();
 </script>
-</body>
-</html>
+<body>
+<nav class="topnav">
+  <button class="menu-btn" aria-label="Abrir menú" onclick="toggleSidebar()">☰</button>
+  <div class="brand"><div class="logo">🏫</div>UniSpace<span class="sub">SiGRE – IUA Facultad de Ingeniería</span></div>
