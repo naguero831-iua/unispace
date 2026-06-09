@@ -155,6 +155,12 @@
     .sidebar.open{left:0}
     .shell{min-height:calc(100vh - 56px)}
     .main{padding:1rem;}
+    .main{padding-bottom:90px}
+    /* mobile adjustments: larger touch targets and cleaner cards */
+    .space-card{padding:1rem;border-radius:14px}
+    .space-icon{width:52px;height:52px;font-size:22px;border-radius:12px}
+    .space-name{font-size:1rem}
+    .btn{height:44px;font-size:1rem;padding:0 14px}
     .stat-grid{grid-template-columns:repeat(2,1fr)}
     .space-grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));}
     .stat{padding:1rem}
@@ -168,15 +174,28 @@
     .stat-grid{grid-template-columns:1fr}
     .cols-2{grid-template-columns:1fr}
     .cols-3{grid-template-columns:1fr}
-    .form-row .fg input,.form-row .fg select{height:42px}
-    .space-card{padding:.9rem}
-    .space-name{font-size:.9rem}
+    .form-row .fg input,.form-row .fg select{height:48px}
+    .space-card{padding:1rem}
+    .space-name{font-size:1rem}
     .menu-btn{font-size:22px}
+    .space-meta{font-size:.9rem}
+    .tag{font-size:12px;padding:6px 9px}
+    .nbadge{font-size:12px;padding:2px 8px}
+  }
+
+  /* Bottom navigation for mobile */
+  .mobile-bottom-nav{display:none}
+  @media (max-width:900px){
+    .mobile-bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:62px;background:var(--white);border-top:1px solid var(--gray-100);align-items:center;justify-content:space-around;padding:6px 10px;z-index:300}
+    .mobile-bottom-nav button{background:transparent;border:none;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;color:var(--gray-600);cursor:pointer}
+    .mobile-bottom-nav button.active{color:var(--blue)}
+    .mobile-bottom-nav .mb-icon{font-size:20px}
   }
 </style>
 </head>
 <body>
 <nav class="topnav">
+  <button class="menu-btn" aria-label="Abrir menú" onclick="toggleSidebar()">☰</button>
   <div class="brand"><div class="logo">🏫</div>UniSpace<span class="sub">UNISPACE – IUA Facultad de Ingeniería</span></div>
   <div class="nav-right">
     <span class="ds-badge local" id="ds-badge">📁 Datos locales</span>
@@ -416,9 +435,18 @@
       </div>
     </div>
         <!-- Instrucciones eliminadas -->
-  </main>
-</div>
-<div class="toast-wrap" id="toasts"></div>
+      </main>
+    </div>
+
+      <!-- Mobile bottom navigation -->
+      <nav class="mobile-bottom-nav" aria-hidden="false">
+        <button onclick="go('dashboard');document.querySelectorAll('.mobile-bottom-nav button').forEach(b=>b.classList.remove('active'));event.currentTarget.classList.add('active')"><div class="mb-icon">🏠</div><div>Inicio</div></button>
+        <button onclick="go('reservar');document.querySelectorAll('.mobile-bottom-nav button').forEach(b=>b.classList.remove('active'));event.currentTarget.classList.add('active')"><div class="mb-icon">📅</div><div>Reservar</div></button>
+        <button onclick="go('mis-reservas');document.querySelectorAll('.mobile-bottom-nav button').forEach(b=>b.classList.remove('active'));event.currentTarget.classList.add('active')"><div class="mb-icon">📋</div><div>Mis reservas</div></button>
+        <button onclick="toggleSidebar()"><div class="mb-icon">☰</div><div>Menú</div></button>
+      </nav>
+
+    <div class="toast-wrap" id="toasts"></div>
 
 <script>
 // ====== FALLBACK DATA ======
@@ -796,8 +824,8 @@ setRole(currentRole);
   const rf=document.getElementById('r-fecha');
   if(rf){rf.value=today;rf.min=today;}
 })();
+// marcar primer botón de la barra inferior como activo en móviles
+setTimeout(()=>{const mb=document.querySelectorAll('.mobile-bottom-nav button');if(mb&&mb[0])mb[0].classList.add('active');},300);
 </script>
-<body>
-<nav class="topnav">
-  <button class="menu-btn" aria-label="Abrir menú" onclick="toggleSidebar()">☰</button>
-  <div class="brand"><div class="logo">🏫</div>UniSpace<span class="sub">SiGRE – IUA Facultad de Ingeniería</span></div>
+</body>
+</html>
