@@ -179,7 +179,7 @@
 <nav class="topnav">
   <div class="brand"><div class="logo">🏫</div>UniSpace<span class="sub">UNISPACE – IUA Facultad de Ingeniería</span></div>
   <div class="nav-right">
-    <span class="ds-badge loading" id="ds-badge" title="Click para configurar fuente de datos" onclick="toggleConfig()">⏳ Cargando…</span>
+    <span class="ds-badge local" id="ds-badge">📁 Datos locales</span>
     <span id="nav-name">Juan Pérez</span>
     <span class="role-badge alumno" id="nav-badge">Alumno</span>
     <div class="avatar" id="nav-avatar">JP</div>
@@ -208,16 +208,7 @@
     </div>
   </aside>
   <main class="main">
-    <!-- CONFIG BANNER -->
-    <div id="config-banner" class="config-panel" style="display:none">
-      <h4>📊 Conectar con Google Sheets</h4>
-      <div class="config-row">
-        <input type="text" id="sheet-id-input" placeholder="ID del Google Sheet (ej: 1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms)">
-        <button class="btn btn-success btn-sm" onclick="connectSheet()">Conectar</button>
-        <button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.2);" onclick="document.getElementById('config-banner').style.display='none'">✕</button>
-      </div>
-      <p class="config-note">La hoja debe estar publicada y compartida como pública. Pestañas requeridas: espacios, reservas, franjas, usuarios.</p>
-    </div>
+    <!-- Configuración de Google Sheets eliminada -->
 
     <!-- DASHBOARD -->
     <div class="screen active" id="screen-dashboard">
@@ -424,33 +415,7 @@
         </div>
       </div>
     </div>
-    <!-- INSTRUCCIONES -->
-    <div style="margin-top:2rem;padding:1.5rem;background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);font-size:.83rem;color:var(--gray-600);">
-      <div style="font-weight:600;color:var(--navy);margin-bottom:.75rem">📋 Cómo conectar tu Google Sheet</div>
-      <ol style="padding-left:1.25rem;line-height:2">
-        <li>Creá una nueva hoja en <a href="https://docs.google.com/spreadsheets/create" target="_blank" style="color:var(--blue)">Google Sheets</a></li>
-        <li>Creá 4 pestañas con nombres exactos: <span class="mono">espacios</span> · <span class="mono">reservas</span> · <span class="mono">franjas</span> · <span class="mono">usuarios</span></li>
-        <li>Copiá los encabezados CSV de abajo en cada pestaña y agregá los datos</li>
-        <li>Andá a <b>Archivo → Compartir → Publicar en la web</b>, publicá cada hoja como CSV</li>
-        <li>Copiá el ID del Sheet desde la URL y pegalo haciendo click en el badge <b>📁 Datos locales</b> arriba</li>
-      </ol>
-      <div style="margin-top:1rem;display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
-        <div><div style="font-weight:500;color:var(--gray-900);margin-bottom:.3rem">espacios</div>
-        <pre style="background:var(--gray-50);padding:.65rem;border-radius:6px;font-size:.72rem;overflow-x:auto;border:1px solid var(--gray-200)">id,nombre,tipo,edificio,piso,capacidad,tags,icon,estado
-esp-01,Aula 101,Aula,Edificio A,Primer piso,40,"Proyector,WiFi",🎓,activo</pre></div>
-        <div><div style="font-weight:500;color:var(--gray-900);margin-bottom:.3rem">reservas</div>
-        <pre style="background:var(--gray-50);padding:.65rem;border-radius:6px;font-size:.72rem;overflow-x:auto;border:1px solid var(--gray-200)">id,espacioId,espacio,tipo,edificio,piso,fecha,hora,estado,icon,capacidad,tags,creado,usuario
-res-001,esp-01,Aula 101,Aula,Edificio A,Primer piso,2026-06-10,08:00 – 10:00,vigente,🎓,40,"Proyector,WiFi",2026-06-08 09:12,Juan Pérez</pre></div>
-        <div><div style="font-weight:500;color:var(--gray-900);margin-bottom:.3rem">franjas</div>
-        <pre style="background:var(--gray-50);padding:.65rem;border-radius:6px;font-size:.72rem;overflow-x:auto;border:1px solid var(--gray-200)">id,inicio,fin,label
-franja-01,08:00,10:00,08:00 – 10:00
-franja-02,10:00,12:00,10:00 – 12:00</pre></div>
-        <div><div style="font-weight:500;color:var(--gray-900);margin-bottom:.3rem">usuarios</div>
-        <pre style="background:var(--gray-50);padding:.65rem;border-radius:6px;font-size:.72rem;overflow-x:auto;border:1px solid var(--gray-200)">id,nombre,apellido,email,rol,avatar
-usr-01,Juan,Pérez,juan.perez@iua.edu.ar,alumno,JP
-usr-02,María,González,m@iua.edu.ar,docente,MG</pre></div>
-      </div>
-    </div>
+        <!-- Instrucciones eliminadas -->
   </main>
 </div>
 <div class="toast-wrap" id="toasts"></div>
@@ -491,7 +456,8 @@ usr-04,Ana,Martínez,ana.martinez@iua.edu.ar,alumno,AM`
 
 // ====== APP STATE ======
 let DB = {espacios:[],reservas:[],franjas:[],usuarios:[]};
-let sheetId = localStorage.getItem('unispace_sheet_id')||'';
+// Google Sheets support removed; always use local CSVs or embedded FALLBACK
+let sheetId = '';
 let currentRole='alumno', selEspacio=null, selReserva=null;
 
 // ====== CSV PARSER ======
@@ -532,38 +498,23 @@ function parseCSVLine(line){
 const TABS=['espacios','reservas','franjas','usuarios'];
 async function loadData(){
   setBadge('loading','⏳ Cargando…');
-  if(sheetId){
-    const ok=await trySheets(sheetId);
-    if(ok){setBadge('sheets','📊 Google Sheets');postLoad();return;}
-  }
-  TABS.forEach(t=>{DB[t]=parseCSV(FALLBACK[t]);});
-  setBadge('local','📁 Datos locales');
-  postLoad();
-}
-async function trySheets(id){
+  // Intent: prefer serving static CSVs from ./data/*.csv (works on Vercel). If that fails, use embedded FALLBACK.
   try{
-    const rs=await Promise.all(TABS.map(t=>
-      fetch(`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(t)}`)
-      .then(r=>{if(!r.ok)throw new Error(r.status);return r.text();})
+    const rs = await Promise.all(TABS.map(t=>
+      fetch(`./data/${t}.csv`).then(r=>{ if(!r.ok) throw new Error(r.status); return r.text(); })
     ));
-    TABS.forEach((t,i)=>{DB[t]=parseCSV(rs[i]);});
-    return true;
+    TABS.forEach((t,i)=>{ DB[t]=parseCSV(rs[i]); });
+    setBadge('local','📁 Datos locales');
+    postLoad();
+    return;
   }catch(e){
-    console.warn('Sheets fail:',e.message);
-    // Intentar cargar archivos estáticos locales (útiles en Vercel): ./data/<tab>.csv
-    try{
-      const rs2 = await Promise.all(TABS.map(t=>
-        fetch(`./data/${t}.csv`).then(r=>{if(!r.ok)throw new Error(r.status);return r.text();})
-      ));
-      TABS.forEach((t,i)=>{DB[t]=parseCSV(rs2[i]);});
-      console.info('Loaded local CSVs from ./data/');
-      return true;
-    }catch(e2){
-      console.warn('Local CSVs fail:',e2.message);
-      return false;
-    }
+    console.warn('Local CSVs not found, using embedded FALLBACK');
+    TABS.forEach(t=>{DB[t]=parseCSV(FALLBACK[t]);});
+    setBadge('local','📁 Datos locales');
+    postLoad();
   }
 }
+// Google Sheets loading logic removed. Data is loaded from ./data/*.csv or embedded FALLBACK.
 function postLoad(){
   populateFranjas();populateTipos();
   refreshDash();renderMisRes('todas');renderCanList();renderAsiList();renderAdmTable('todos');
@@ -572,26 +523,7 @@ function setBadge(t,l){
   const el=document.getElementById('ds-badge');
   el.className='ds-badge '+t;el.textContent=l;
 }
-function toggleConfig(){
-  const b=document.getElementById('config-banner');
-  b.style.display=b.style.display==='none'?'':'none';
-  if(b.style.display!=='none'){document.getElementById('sheet-id-input').value=sheetId;document.getElementById('sheet-id-input').focus();}
-}
-async function connectSheet(){
-  const id=document.getElementById('sheet-id-input').value.trim();
-  if(!id){toast('Ingresá un ID válido','error');return;}
-  setBadge('loading','⏳ Conectando…');
-  const ok=await trySheets(id);
-  if(ok){
-    sheetId=id;localStorage.setItem('unispace_sheet_id',id);
-    setBadge('sheets','📊 Google Sheets');
-    document.getElementById('config-banner').style.display='none';
-    postLoad();toast('✅ Conectado a Google Sheets','success');
-  }else{
-    setBadge('local','📁 Datos locales');
-    toast('No se pudo conectar. Verificá el ID y los permisos.','error');
-  }
-}
+// Config de Google Sheets eliminada — uso solo datos locales o ./data/*.csv
 
 // ====== NAVIGATION ======
 function go(id){
