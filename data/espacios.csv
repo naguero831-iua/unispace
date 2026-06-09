@@ -1,0 +1,11 @@
+id,nombre,tipo,edificio,piso,capacidad,tags,icon,estado
+esp-01,Aula 101,Aula,Edificio A,Primer piso,40,"Proyector,Pizarra digital,Aire acondicionado,WiFi",🎓,activo
+esp-02,Aula 102,Aula,Edificio A,Primer piso,35,"Proyector,Pizarra,WiFi",🎓,activo
+esp-03,Aula 201,Aula,Edificio A,Segundo piso,45,"Proyector,Pizarra digital,Aire acondicionado",🎓,activo
+esp-04,Lab. Computación 1,Laboratorio,Edificio B,Primer piso,30,"30 computadoras,Proyector,Software especializado,WiFi",🔬,activo
+esp-05,Lab. Computación 2,Laboratorio,Edificio B,Primer piso,25,"25 computadoras,Proyector,Software especializado,WiFi",🔬,activo
+esp-06,Lab. Electrónica,Laboratorio,Edificio B,Segundo piso,20,"Instrumental de medición,Osciloscopios,WiFi",🔬,activo
+esp-07,Auditorio Principal,Auditorio,Edificio Central,Planta baja,200,"Sistema audio profesional,Proyector HD,Escenario,Iluminación,WiFi",🎭,activo
+esp-08,Sala de Reuniones A,Sala,Edificio A,Segundo piso,12,"TV Smart,Pizarra,WiFi",🎓,activo
+esp-09,Sala de Estudio 1,Sala de estudio,Biblioteca,Segundo piso,15,"WiFi,Pizarras",📚,activo
+esp-10,Sala de Estudio 2,Sala de estudio,Biblioteca,Segundo piso,15,"WiFi,Pizarras",📚,inactivo

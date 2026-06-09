@@ -1,0 +1,5 @@
+id,nombre,apellido,email,rol,avatar
+usr-01,Juan,Pérez,juan.perez@iua.edu.ar,alumno,JP
+usr-02,María,González,maria.gonzalez@iua.edu.ar,docente,MG
+usr-03,Carlos,Rodríguez,carlos.rodriguez@iua.edu.ar,admin,CR
+usr-04,Ana,Martínez,ana.martinez@iua.edu.ar,alumno,AM

@@ -466,24 +466,36 @@ let currentRole='alumno', selEspacio=null, selReserva=null;
 
 // ====== CSV PARSER ======
 function parseCSV(txt){
-  const lines=txt.trim().split('\n');
-  if(lines.length<2)return[];
-  const hdrs=csvLine(lines[0]);
+  if(!txt) return [];
+  // Normalize line endings and split; ignore empty lines
+  const lines = txt.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n').filter(l=>l.trim()!=='');
+  if(lines.length<2) return [];
+  const hdrs = parseCSVLine(lines[0]);
   return lines.slice(1).map(l=>{
-    const v=csvLine(l), o={};
-    hdrs.forEach((h,i)=>o[h.trim()]=(v[i]||'').trim());
+    const v = parseCSVLine(l);
+    const o = {};
+    hdrs.forEach((h,i)=> o[h.trim()] = (v[i]!==undefined? v[i] : '').trim());
     return o;
   });
 }
-function csvLine(l){
-  const r=[];let cur='',inQ=false;
-  for(let i=0;i<l.length;i++){
-    const c=l[i];
-    if(c==='"'){inQ=!inQ;continue;}
-    if(c===','&&!inQ){r.push(cur);cur='';continue;}
-    cur+=c;
+
+function parseCSVLine(line){
+  const res = [];
+  let cur = '';
+  let inQuotes = false;
+  for(let i=0;i<line.length;i++){
+    const c = line[i];
+    if(c === '"'){
+      // If double quote inside quoted field, consume one and add a quote
+      if(inQuotes && line[i+1] === '"'){ cur += '"'; i++; continue; }
+      inQuotes = !inQuotes;
+      continue;
+    }
+    if(c === ',' && !inQuotes){ res.push(cur); cur = ''; continue; }
+    cur += c;
   }
-  r.push(cur);return r;
+  res.push(cur);
+  return res;
 }
 
 // ====== DATA LOADING ======
@@ -501,12 +513,26 @@ async function loadData(){
 async function trySheets(id){
   try{
     const rs=await Promise.all(TABS.map(t=>
-      fetch(`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&sheet=${t}`)
+      fetch(`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(t)}`)
       .then(r=>{if(!r.ok)throw new Error(r.status);return r.text();})
     ));
     TABS.forEach((t,i)=>{DB[t]=parseCSV(rs[i]);});
     return true;
-  }catch(e){console.warn('Sheets fail:',e.message);return false;}
+  }catch(e){
+    console.warn('Sheets fail:',e.message);
+    // Intentar cargar archivos estáticos locales (útiles en Vercel): ./data/<tab>.csv
+    try{
+      const rs2 = await Promise.all(TABS.map(t=>
+        fetch(`./data/${t}.csv`).then(r=>{if(!r.ok)throw new Error(r.status);return r.text();})
+      ));
+      TABS.forEach((t,i)=>{DB[t]=parseCSV(rs2[i]);});
+      console.info('Loaded local CSVs from ./data/');
+      return true;
+    }catch(e2){
+      console.warn('Local CSVs fail:',e2.message);
+      return false;
+    }
+  }
 }
 function postLoad(){
   populateFranjas();populateTipos();

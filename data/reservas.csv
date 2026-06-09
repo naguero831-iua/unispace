@@ -1,0 +1,6 @@
+id,espacioId,espacio,tipo,edificio,piso,fecha,hora,estado,icon,capacidad,tags,creado,usuario
+res-001,esp-01,Aula 101,Aula,Edificio A,Primer piso,2026-06-10,08:00 – 10:00,vigente,🎓,40,"Proyector,Pizarra digital,Aire acondicionado,WiFi",2026-06-08 09:12,Juan Pérez
+res-002,esp-04,Lab. Computación 1,Laboratorio,Edificio B,Primer piso,2026-06-11,10:00 – 12:00,vigente,🔬,30,"30 computadoras,Proyector,WiFi",2026-06-07 14:30,Juan Pérez
+res-003,esp-07,Auditorio Principal,Auditorio,Edificio Central,Planta baja,2026-06-12,14:00 – 16:00,pendiente,🎭,200,"Sistema audio,Proyector HD,Escenario,WiFi",2026-06-05 18:00,Juan Pérez
+res-004,esp-02,Aula 102,Aula,Edificio A,Primer piso,2026-06-01,10:00 – 12:00,asistida,🎓,35,"Proyector,Pizarra",2026-05-28 11:00,Juan Pérez
+res-005,esp-05,Lab. Computación 2,Laboratorio,Edificio B,Primer piso,2026-05-26,08:00 – 10:00,cancelada,🔬,25,"25 computadoras",2026-05-20 09:00,Juan Pérez
